@@ -1,0 +1,73 @@
+{% extends "admin_base.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="admin-panel">
+            <div class="admin-header">
+                <h2><i class="fas fa-shield-alt"></i> Admin Panel</h2>
+                <p>Welcome, Admin {{ current_user.username }}! Manage events below.</p>
+                <a href="{{ url_for('all_events') }}" class="btn btn-primary">View All Events</a>
+            </div>
+            <div class="admin-event-list">
+                <h3>Pending Events for Approval</h3>
+                {% if events %}
+                    {% for event in events %}
+                    <div class="admin-event-card" id="admin-event-card-{{ event.id }}">
+                        <div class="event-header">
+                            <div class="event-details">
+                                <h3>{{ event.title }}</h3>
+                                <p><strong>Date:</strong> {{ event.date.strftime('%Y-%m-%d') }}</p>
+                                <p><strong>Status:</strong> {{ event.status.value }}</p>
+                            </div>
+                        </div>
+                        <div class="admin-actions">
+                            <button class="btn btn-approve" data-event-id="{{ event.id }}" id="approve-btn-{{ event.id }}">Approve</button>
+                            <button class="btn btn-reject" data-event-id="{{ event.id }}" id="reject-btn-{{ event.id }}">Reject</button>
+                            <a href="{{ url_for('admin_edit_event', event_id=event.id) }}" class="btn btn-primary">Edit</a>
+                            <form action="{{ url_for('delete_event', event_id=event.id) }}" method="POST" class="delete-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger delete-btn" data-event-id="{{ event.id }}">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-events">
+                        <i class="fas fa-exclamation-circle"></i> No pending events to manage.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        document.querySelectorAll('.btn-approve, .btn-reject').forEach(button => {
+            button.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                const action = this.classList.contains('btn-approve') ? 'approve' : 'reject';
+                fetch(`/admin/events/${eventId}/${action}`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) location.reload();
+                });
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const eventCard = this.closest('.admin-event-card');
+                eventCard.classList.add('deleting');
+                eventCard.addEventListener('animationend', () => form.submit());
+            });
+        });
+    </script>
+{% endblock %}

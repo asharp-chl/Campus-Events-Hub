@@ -1,0 +1,122 @@
+{% extends "admin_base.html" %}
+{% block title %}Home{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        {% if current_user.is_authenticated %}
+            <div class="welcome-message">
+                <h2>Welcome, {{ current_user.username }}! <i class="fas fa-user"></i></h2>
+                <p>Check out the latest events on campus.</p>
+            </div>
+        {% else %}
+            <div class="welcome-message">
+                <h2>Welcome to Campus Events Hub! <i class="fas fa-calendar-alt"></i></h2>
+                <p>Login or register to join the fun!</p>
+            </div>
+        {% endif %}
+        <div class="page-header">
+            <h2><i class="fas fa-calendar-alt"></i> Upcoming Events</h2>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('create_event_page') }}" class="btn btn-primary create-event-btn">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+            {% endif %}
+        </div>
+        <div class="filters">
+            <select class="form-control" id="category-filter">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <input type="date" class="form-control" id="date-filter">
+            <button class="btn btn-primary" id="apply-filters">Apply Filters</button>
+        </div>
+        <div class="page-separator"></div>
+        <div class="events-grid" id="events-grid">
+            {% if events %}
+                {% for event in events %}
+                    <div class="event-card" id="event-card-{{ event.id }}">
+                        <h3><a href="{{ url_for('get_event_page', event_id=event.id) }}">{{ event.title }}</a></h3>
+                        <div class="event-meta">
+                            <span><i class="fas fa-calendar"></i> {{ event.date.strftime('%d/%m/%Y') }}</span>
+                            <span><i class="fas fa-clock"></i> {{ event.time.strftime('%H:%M') }}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+                        </div>
+                        <div class="event-category">{{ event.category }}</div>
+                        <p>{{ event.description }}</p>
+                        <a href="{{ url_for('get_event_page', event_id=event.id) }}" class="btn btn-primary btn-read-more">Read More</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-events">
+                    <i class="fas fa-exclamation-circle"></i> No events found.
+                </div>
+            {% endif %}
+        </div>
+        <div class="loading-spinner" id="loading-spinner" style="display: none;">
+            <i class="fas fa-spinner"></i> Loading...
+        </div>
+        <div class="error-message" id="error-message" style="display: none;"></div>
+        <div class="exit-section" id="exit-section" style="display: none;">
+            <p>You've reached the end of events listing.</p>
+            <div class="exit-actions">
+                <a href="{{ url_for('index') }}" class="btn btn-primary"><i class="fas fa-home"></i> Return Home</a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary"><i class="fas fa-tachometer-alt"></i> View Dashboard</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        document.getElementById('apply-filters').addEventListener('click', function() {
+            const category = document.getElementById('category-filter').value;
+            const date = document.getElementById('date-filter').value;
+            const spinner = document.getElementById('loading-spinner');
+            const grid = document.getElementById('events-grid');
+            const errorMessage = document.getElementById('error-message');
+            const exitSection = document.getElementById('exit-section');
+
+            spinner.style.display = 'flex';
+            grid.style.display = 'none';
+            errorMessage.style.display = 'none';
+            exitSection.style.display = 'none';
+
+            fetch(`/api/events?category=${category}&date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    spinner.style.display = 'none';
+                    grid.style.display = 'grid';
+                    if (data.length === 0) {
+                        grid.innerHTML = `
+                            <div class="no-events">
+                                <i class="fas fa-exclamation-circle"></i> No events found.
+                            </div>`;
+                        exitSection.style.display = 'block';
+                    } else {
+                        grid.innerHTML = data.map(event => `
+                            <div class="event-card" id="event-card-${event.id}">
+                                <h3><a href="/events/${event.id}">${event.title}</a></h3>
+                                <div class="event-meta">
+                                    <span><i class="fas fa-calendar"></i> ${event.date}</span>
+                                    <span><i class="fas fa-clock"></i> ${event.time}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> ${event.location}</span>
+                                </div>
+                                <div class="event-category">${event.category}</div>
+                                <p>${event.description}</p>
+                                <a href="/events/${event.id}" class="btn btn-primary btn-read-more">Read More</a>
+                            </div>
+                        `).join('');
+                    }
+                })
+                .catch(error => {
+                    spinner.style.display = 'none';
+                    errorMessage.textContent = 'Error loading events. Please try again.';
+                    errorMessage.style.display = 'block';
+                    console.error('Error fetching events:', error);
+                });
+        });
+    </script>
+{% endblock %}

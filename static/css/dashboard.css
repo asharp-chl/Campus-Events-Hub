@@ -1,0 +1,104 @@
+.event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.event-card {
+    background-color: var(--white);
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    transition: background-color var(--transition), transform 0.2s var(--animation-ease);
+}
+
+.event-card.deleting {
+    animation: fadeOut 0.6s var(--animation-ease) forwards;
+}
+
+.event-card:hover {
+    background-color: var(--light-blue);
+    transform: translateY(-2px);
+}
+
+.event-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.event-content h3 a {
+    color: var(--dark-blue);
+    transition: color var(--transition);
+}
+
+.event-content h3 a:hover {
+    color: var(--primary-blue);
+}
+
+.event-meta {
+    font-size: 0.9rem;
+    color: var(--gray);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.event-meta .status-pending {
+    color: var(--primary-blue);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.event-description {
+    font-size: 0.95rem;
+    color: var(--gray);
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.event-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-self: end;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.create-event-btn {
+    background: var(--gradient-blue);
+    color: var(--white);
+    margin-top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.create-event-btn:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #0097c7 100%);
+}
+
+@media (max-width: 768px) {
+    .event-card {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .event-actions {
+        justify-self: start;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .event-content h3 {
+        font-size: 1.15rem;
+    }
+
+    .event-description {
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Campus Events Hub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_base.css') }}">
+    {% block css %}{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Campus Events Hub"></div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="{% if request.path == url_for('index') %}active{% endif %}">Home</a>
+                {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="{% if request.path == url_for('admin_dashboard') %}active{% endif %}">Admin Panel</a>
+                    <a href="{{ url_for('create_event_page') }}" class="{% if request.path == url_for('create_event_page') %}active{% endif %}">Create Event</a>
+                    <a href="{{ url_for('profile') }}" class="{% if request.path == url_for('profile') %}active{% endif %}">Profile</a>
+                    <a href="{{ url_for('logout') }}" class="{% if request.path == url_for('logout') %}active{% endif %}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="{% if request.path == url_for('login') %}active{% endif %}">Login</a>
+                    <a href="{{ url_for('register') }}" class="{% if request.path == url_for('register') %}active{% endif %}">Register</a>
+                {% endif %}
+            </div>
+            {% if current_user.is_authenticated %}
+                <div class="notification-wrapper">
+                    <a href="#" id="notification-bell"><i class="fas fa-bell"></i></a>
+                    <span class="notification-badge" id="notification-count">0</span>
+                    <div class="notification-dropdown" id="notification-dropdown">
+                        <div class="notification-list" id="notification-list"></div>
+                    </div>
+                </div>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <div class="footer-content">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Footer Logo" class="footer-logo">
+            <p>© 2025 Campus Events Hub. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% if current_user.is_authenticated %}
+        <script>
+            function fetchNotifications() {
+                fetch('/notifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('notification-count');
+                        const list = document.getElementById('notification-list');
+                        badge.textContent = data.length;
+                        badge.style.display = data.length > 0 ? 'inline-block' : 'none';
+                        list.innerHTML = data.length ? data.map(n => `
+                            <div class="notification-item">
+                                <p>${n.message}</p>
+                                <small>${n.created_at}</small>
+                                <button class="dismiss-btn" data-id="${n.id}">Dismiss</button>
+                            </div>
+                        `).join('') : '<p>No new notifications.</p>';
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', fetchNotifications);
+
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('dismiss-btn')) {
+                    const notificationId = e.target.getAttribute('data-id');
+                    fetch(`/notifications/${notificationId}/dismiss`, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token() }}' }
+                    }).then(() => fetchNotifications());
+                }
+            });
+        </script>
+    {% endif %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

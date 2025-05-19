@@ -1,0 +1,95 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>{% if role == 'admin' %}
+    {% extends "admin_base.html" %}
+{% else %}
+    {% extends "base.html" %}
+{% endif %}
+{% block title %}All Events - Admin{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all_events.css') }}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h2>All Events</h2>
+        <div class="event-list">
+            {% if events %}
+                {% for event in events %}
+                    <div class="event-card" id="event-card-{{ event.id }}">
+                        <div class="event-content">
+                            <h3>{{ event.title }}</h3>
+                            <div class="event-meta">
+                                <span><i class="fas fa-calendar"></i> {{ event.date.strftime('%Y-%m-%d') }}</span>
+                                <span><i class="fas fa-clock"></i> {{ event.time.strftime('%H:%M') }}</span>
+                                <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+                                <span class="event-status">{{ event.status.value }}</span>
+                            </div>
+                            <p>{{ event.description }}</p>
+                        </div>
+                        <div class="event-actions">
+                            <a href="{{ url_for('admin_edit_event', event_id=event.id) }}" class="btn btn-primary">Edit</a>
+                            <form action="{{ url_for('delete_event', event_id=event.id) }}" method="POST" class="delete-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger delete-btn" data-event-id="{{ event.id }}">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-events">
+                    <i class="fas fa-exclamation-circle"></i> No events found.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const eventCard = this.closest('.event-card');
+                eventCard.classList.add('deleting');
+                eventCard.addEventListener('animationend', () => form.submit());
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% if role == 'admin' %}
+    {% extends "admin_base.html" %}
+{% else %}
+    {% extends "base.html" %}
+{% endif %}
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/event.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="event-card">
+        <h2>{{ event.title }}</h2>
+        <div class="event-meta">
+            <span><i class="fas fa-calendar"></i> {{ event.date.strftime('%Y-%m-%d') }}</span>
+            <span><i class="fas fa-clock"></i> {{ event.time.strftime('%H:%M') }}</span>
+            <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+            <span class="event-category">{{ event.category }}</span>
+        </div>
+        <p>{{ event.description }}</p>
+
+        {% if current_user.is_authenticated %}
+        <div class="event-actions">
+            <button class="btn btn-rsvp" id="rsvp-btn" data-event-id="{{ event.id }}">
+                {% if current_user in event.rsvp_users %}
+                    Un-RSVP
+                {% else %}
+                    RSVP
+                {% endif %}
+            </button>
+            <button class="btn btn-heart {% if current_user in event.liked_by %}liked{% endif %}" id="like-btn" data-event-id="{{ event.id }}">
+                <i class="fas fa-heart"></i> {{ event.likes|length }}
+            </button>
+        </div>
+        {% endif %}
+
+        {% if current_user.id == event.organizer.id or current_user.role == 'admin' %}
+        <div class="event-actions">
+            <a href="{{ url_for('edit_event_page', event_id=event.id) }}" class="btn btn-primary">Edit</a>
+            <form action="{{ url_for('delete_event', event_id=event.id) }}" method="POST" class="delete-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger delete-btn" data-event-id="{{ event.id }}">Delete</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('rsvp-btn').addEventListener('click', function () {
+        const eventId = this.getAttribute('data-event-id');
+        const isRsvped = this.textContent === 'Un-RSVP';
+        fetch(`/events/${eventId}/rsvp`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            body: JSON.stringify({ rsvp: !isRsvped })
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.textContent = data.rsvp ? 'Un-RSVP' : 'RSVP';
+            this.classList.toggle('rsvped', data.rsvp);
+            this.classList.add('animate-rsvp');
+            setTimeout(() => this.classList.remove('animate-rsvp'), 600);
+        });
+    });
+
+    document.getElementById('like-btn').addEventListener('click', function () {
+        const eventId = this.getAttribute('data-event-id');
+        const isLiked = this.classList.contains('liked');
+        fetch(`/events/${eventId}/like`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            body: JSON.stringify({ like: !isLiked })
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.classList.toggle('liked', data.liked);
+            this.innerHTML = `<i class="fas fa-heart"></i> ${data.likes}`;
+        });
+    });
+</script>
+{% endblock %}

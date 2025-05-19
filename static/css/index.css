@@ -1,0 +1,229 @@
+.welcome-message {
+    margin-bottom: 2rem;
+    text-align: center;
+    animation: fadeInOpacity 0.4s var(--animation-ease);
+}
+
+.welcome-message h2 {
+    font-size: 2rem;
+    color: var(--dark-blue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.welcome-message p {
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.filters {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: var(--light-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.filters::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--soft-purple) 0%, var(--pink) 100%);
+}
+
+.filters .form-control {
+  max-width: 200px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #e6e9ff;
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  background-color: white;
+  box-shadow: var(--input-shadow);
+  color: #4a6c7a;
+}
+
+.filters .form-control:hover {
+  border-color: #b1cbff;
+}
+
+.filters .form-control:focus {
+  border-color: #0ef2e3;
+  box-shadow: 0 0 0 4px rgba(121, 135, 255, 0.15);
+}
+
+.filters .btn {
+  background: var(--gradient-blue);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.filters .btn:hover {
+  background: linear-gradient(135deg, #21dbbc 0%, #0097c7 100%);
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+}
+.page-separator {
+    height: 1px;
+    background: var(--gradient-blue);
+    margin: 2rem 0;
+    opacity: 0.5;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.event-card {
+    background-color: var(--white);
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    transition: background-color var(--transition);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+}
+
+.event-card:hover {
+    background: linear-gradient(135deg, rgb(145, 242, 226) 0%, #b0dfee 100%);
+    
+}
+
+.event-card h3 a {
+    color: var(--dark-blue);
+    font-size: 1.25rem;
+    transition: color var(--transition);
+}
+
+.event-card h3 a:hover {
+    color: var(--primary-blue);
+}
+
+.event-meta {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.event-meta i {
+    color: var(--primary-blue);
+    margin-right: 0.5rem;
+}
+
+.event-category {
+    display: inline-block;
+    background: var(--gradient-blue);
+    color: var(--white);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.btn-read-more {
+    background: var(--gradient-blue);
+    color: --white;
+}
+
+.btn-read-more:hover {
+    background: linear-gradient(135deg, #21dbbc 0%, #0097c7 100%);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 2rem;
+    color: var(--primary-blue);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.loading-spinner i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.no-events {
+    font-size: 1rem;
+    color: var(--gray);
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--white);
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--danger-red);
+}
+
+.error-message i {
+    font-size: 2rem;
+}
+
+.exit-section {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.exit-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filters .form-control {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .event-card h3 {
+        font-size: 1.15rem;
+    }
+
+    .event-description {
+        font-size: 0.9rem;
+    }
+
+    .welcome-message h2 {
+        font-size: 1.5rem;
+    }
+}
