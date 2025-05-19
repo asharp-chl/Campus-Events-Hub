@@ -3,6 +3,7 @@
 **A vibrant event management platform** connecting students and organizers across campus. Built with Flask, featuring robust authentication and intuitive event management.
 
 
+![Home Screenshot](./screenshots/home.png)
 
 ## ✨ Key Features
 
