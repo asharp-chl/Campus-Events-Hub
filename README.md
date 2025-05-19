@@ -2,8 +2,6 @@
 
 **A vibrant event management platform** connecting students and organizers across campus. Built with Flask, featuring robust authentication and intuitive event management.
 
-![App Screenshot](C:\Users\ALI\OneDrive\Images\Screenshots\ceh.png)
-
 ## ✨ Key Features
 
 ### 🎯 For Students
