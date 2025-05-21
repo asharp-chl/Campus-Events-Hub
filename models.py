@@ -1,11 +1,14 @@
 from app import db  # Import db from app.py
-from flask_login import UserMixin
+from flask_login import UserMixin,AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 from sqlalchemy.sql import func
 from datetime import datetime  # Added for datetime.utcnow
 
+
+
 class UserRole(Enum):
+    GUEST = 'guest'
     USER = 'user'
     ADMIN = 'admin'
 
@@ -13,6 +16,10 @@ class EventStatus(Enum):
     PENDING = 'pending'
     APPROVED = 'approved'
     REJECTED = 'rejected'
+
+
+class AnonymousUser(AnonymousUserMixin):
+    role = UserRole.GUEST  # Assuming you have a GUEST role defined
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -67,3 +74,4 @@ class Notification(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id', ondelete='CASCADE'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_read = db.Column(db.Boolean, default=False)
+

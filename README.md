@@ -1,9 +1,6 @@
 # 🌟 Campus Events Hub
 
-**A vibrant event management platform** connecting students and organizers across campus. Built with Flask, featuring robust authentication and intuitive event management.
-
-
-![Screenshot](./screenshots/home.png)
+**A vibrant event management platform** connecting students and organizers across campus. Built with Flask, featuring robust authentication and intuitive event management
 
 ## ✨ Key Features
 

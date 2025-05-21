@@ -40,10 +40,12 @@ def index():
         events_query = events_query.filter(Event.date == date.fromisoformat(date_filter))
     events = events_query.paginate(page=page, per_page=per_page, error_out=False)
     categories = sorted(set(event.category for event in Event.query.all() if event.category))
-    panel_type = 'Admin Panel' if current_user.role == UserRole.ADMIN else 'Dashboard'
-    if current_user.role == UserRole.ADMIN:
-        return render_template('index_admin.html', events=events, categories=categories, category_filter=category, date_filter=date_filter, panel_type=panel_type)
-    return render_template('index.html', events=events, categories=categories, category_filter=category, date_filter=date_filter, panel_type=panel_type)
+    if current_user.is_authenticated:
+        panel_type = 'Admin Panel' if current_user.role == UserRole.ADMIN else 'Dashboard'
+        if current_user.role == UserRole.ADMIN:
+            return render_template('index_admin.html', events=events, categories=categories, category_filter=category, date_filter=date_filter, panel_type=panel_type)
+        return render_template('index.html', events=events, categories=categories, category_filter=category, date_filter=date_filter, panel_type=panel_type)
+    return render_template('index.html', events=events, categories=categories, category_filter=category, date_filter=date_filter)
 @app.route('/api/events', methods=['GET'])
 def get_events():
     query = Event.query.filter_by(status=EventStatus.APPROVED)
@@ -595,4 +597,4 @@ def create_admin():
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True
-    app.run(debug=True)
+    app.run(host='192.168.110.168', port=5000)
