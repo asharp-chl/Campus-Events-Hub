@@ -252,9 +252,9 @@ nav {
     max-width: 1280px;
     margin: 2rem auto;
     padding: 2rem;
-    background-color: var(--white);
+    background-color: #c8def531;
     border-radius: var(--border-radius);
-    border: 1px solid #e9ecef;
+    border: 1px solid #c8def531;
     animation: fadeInOpacity 0.4s var(--animation-ease);
 }
 

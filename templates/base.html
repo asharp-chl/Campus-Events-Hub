@@ -13,8 +13,7 @@
 <body>
     <header>
         <nav>
-            <div class="logo"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Campus Events Hub"></div>
-                        <div class="nav-links">
+            <div class="logo"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Campus Events Hub"></div><div class="nav-links">
                 <a href="{{ url_for('index') }}" class="{% if request.path == url_for('index') %}active{% endif %}">
                     <img src="{{ url_for('static', filename='icons/home.png') }}" alt="Home" class="nav-icon">
                     <span class="tooltip-text">Home</span>

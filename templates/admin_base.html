@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="../static/icons/favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Campus Events Hub{% endblock %}</title>
@@ -12,27 +13,38 @@
 <body>
     <header>
         <nav>
-            <div class="logo"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Campus Events Hub"></div>
-            <div class="nav-links">
-                <a href="{{ url_for('index') }}" class="{% if request.path == url_for('index') %}active{% endif %}">Home</a>
+            <div class="logo"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Campus Events Hub"></div><div class="nav-links">
+                <a href="{{ url_for('index') }}" class="{% if request.path == url_for('index') %}active{% endif %}">
+                    <img src="{{ url_for('static', filename='icons/home.png') }}" alt="Home" class="nav-icon">
+                    <span class="tooltip-text">Home</span>
+                </a>
                 {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('admin_dashboard') }}" class="{% if request.path == url_for('admin_dashboard') %}active{% endif %}">Admin Panel</a>
-                    <a href="{{ url_for('create_event_page') }}" class="{% if request.path == url_for('create_event_page') %}active{% endif %}">Create Event</a>
-                    <a href="{{ url_for('profile') }}" class="{% if request.path == url_for('profile') %}active{% endif %}">Profile</a>
-                    <a href="{{ url_for('logout') }}" class="{% if request.path == url_for('logout') %}active{% endif %}">Logout</a>
+                    <a href="{{ url_for('dashboard') }}" class="{% if request.path == url_for('dashboard') %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='icons/admin_panel.png') }}" alt="Dashboard" class="nav-icon">
+                        <span class="tooltip-text">Admin Panel</span>
+                    </a>
+                    <a href="{{ url_for('create_event_page') }}" class="{% if request.path == url_for('create_event_page') %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='icons/create.png') }}" alt="Create Event" class="nav-icon">
+                        <span class="tooltip-text">Create Event</span>
+                    </a>
+                    <a href="{{ url_for('profile') }}" class="{% if request.path == url_for('profile') %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='icons/profile.png') }}" alt="Profile" class="nav-icon">
+                        <span class="tooltip-text">Profile</span>
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="{% if request.path == url_for('logout') %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='icons/signout.png') }}" alt="Logout" class="nav-icon">
+                        <span class="tooltip-text">Logout</span>
+                    </a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="{% if request.path == url_for('login') %}active{% endif %}">Login</a>
-                    <a href="{{ url_for('register') }}" class="{% if request.path == url_for('register') %}active{% endif %}">Register</a>
-                {% endif %}
+                    <a href="{{ url_for('login') }}" class="{% if request.path == url_for('login') %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='icons/login.png') }}" alt="Login" class="nav-icon">
+                        <span class="tooltip-text">Login</span>
+                    </a>
+                    <a href="{{ url_for('register') }}" class="{% if request.path == url_for('register') %}active{% endif %}">
+                        <img src="{{ url_for('static', filename='icons/register.png') }}" alt="Register" class="nav-icon">
+                        <span class="tooltip-text">Register</span>
+                    </a>
             </div>
-            {% if current_user.is_authenticated %}
-                <div class="notification-wrapper">
-                    <a href="#" id="notification-bell"><i class="fas fa-bell"></i></a>
-                    <span class="notification-badge" id="notification-count">0</span>
-                    <div class="notification-dropdown" id="notification-dropdown">
-                        <div class="notification-list" id="notification-list"></div>
-                    </div>
-                </div>
             {% endif %}
         </nav>
     </header>
