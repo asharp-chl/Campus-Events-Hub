@@ -185,14 +185,17 @@ nav {
     position: absolute;
     top: 2rem;
     right: 0;
-    background-color: var(--white);
-    border: 1px solid #e9ecef;
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-width: 300px;
+    background: rgba(255, 255, 255, 0.75); /* translucent white */
+    backdrop-filter: blur(12px); /* glassy effect */
+    -webkit-backdrop-filter: blur(12px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem; /* more rounded */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* soft shadow */
+    min-width: 320px;
     max-height: 400px;
     overflow-y: auto;
     z-index: 1000;
+    transition: all 0.3s ease-in-out;
 }
 
 .notification-wrapper:hover .notification-dropdown {
@@ -200,41 +203,48 @@ nav {
 }
 
 .notification-item {
-    padding: 1rem;
-    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid rgba(233, 236, 239, 0.6);
+    transition: background 0.2s;
 }
 
 .notification-item:last-child {
     border-bottom: none;
 }
 
+.notification-item:hover {
+    background: rgba(240, 240, 240, 0.5);
+    cursor: pointer;
+}
+
 .notification-item p {
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--dark-blue);
+    font-size: 1rem;
+    color: #1c1c1e;
+    font-weight: 500;
 }
 
 .notification-item small {
     display: block;
-    color: var(--gray);
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
+    color: #6e6e73;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
 }
 
 .dismiss-btn {
-    background-color: var(--danger-red);
-    color: var(--white);
+    background-color: #ff3b30;
+    color: white;
     border: none;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    padding: 0.4rem 0.75rem;
+    border-radius: 10px;
     font-size: 0.8rem;
     cursor: pointer;
     margin-top: 0.5rem;
-    transition: var(--transition);
+    transition: background 0.3s ease;
 }
 
 .dismiss-btn:hover {
-    background-color: #c82333;
+    background-color: #f24037;
 }
 
 /* Main Container */
