@@ -35,5 +35,5 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/asharp-chl/Campus-Events-Hub.git
-   cd Campus-Events-Hub
+   git clone git@github.com:asharp-chl/Campus-Events-Hub_Abdelali_Afoughal.git
+   cd Campus-Events-Hub_Abdelali_Afoughal
